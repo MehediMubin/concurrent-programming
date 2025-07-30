@@ -27,19 +27,19 @@ func datesOverlap(start1, end1, start2, end2 time.Time) bool {
 	return start1.Before(end2) && start2.Before(end1)
 }
 
-func (h *Hotel) BookRoom(roomId, userId int, startDate, endDate time.Time) error {
+func (h *Hotel) BookRoom(roomNumber, userId int, startDate, endDate time.Time) error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	bookings := h.reservations[roomId]
+	bookings := h.reservations[roomNumber]
 	for _, booking := range bookings {
 		if datesOverlap(startDate, endDate, booking.StartDate, booking.EndDate) {
-			return fmt.Errorf("room %d already booked for overlapping dates", roomId)
+			return fmt.Errorf("room %d already booked for overlapping dates", roomNumber)
 		}
 	}
 
 	// No overlap, book the room
-	h.reservations[roomId] = append(h.reservations[roomId], Booking{
+	h.reservations[roomNumber] = append(h.reservations[roomNumber], Booking{
 		UserId: userId,
 		StartDate: startDate,
 		EndDate: endDate,
